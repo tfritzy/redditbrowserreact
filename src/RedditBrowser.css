@@ -1,8 +1,11 @@
 .RedditBrowser {
     text-align: left;
-    background-color: #282c34;
     height: 100vh;
     color: azure;
+    width: 50%;
+    border-radius: 5px;
+    border: white;
+    border-width: 1px;
 }
 
 .App-logo {

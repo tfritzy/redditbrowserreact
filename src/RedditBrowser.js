@@ -6,7 +6,7 @@ import ContentEditable from "react-contenteditable";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 
-const POSTS_PER_PAGE = 5;
+const POSTS_PER_PAGE = 3;
 
 Object.byString = function (o, s) {
     s = s.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties
@@ -117,7 +117,7 @@ class RedditBrowser extends React.Component {
     }
 
     getPost() {
-        const url = this.state.posts[this.state.currentPostIndex]["full_link"];
+        const url = this.state.posts[this.state.currentPostIndex].full_link;
         fetch(url + ".json?sort=top")
             .then((response) => response.json())
             .then((data) => {
@@ -205,6 +205,10 @@ class RedditBrowser extends React.Component {
     }
 
     getPostPermaLink() {
+        if (this.state.currentPost) {
+            return this.state.currentPost[0].data.children[0].data.permalink;
+        }
+
         return this.state.posts.length > this.state.currentPostIndex
             ? this.state.posts[this.state.currentPostIndex]["permalink"]
             : "loading post";
@@ -220,12 +224,37 @@ class RedditBrowser extends React.Component {
         }
     }
 
+    getUps() {
+        if (this.state.posts.length > this.state.currentPostIndex) {
+            return this.state.posts[this.state.currentPostIndex].score;
+        }
+
+        return 0;
+    }
+
     getPostBody() {
         return this.state.currentPost ? "[0].data.children[0].data" : {selftext: "Unloaded Body"};
     }
 
     changeSelectedDate(newDate) {
         this.setState({startDate: newDate}, () => this.callPostshift());
+    }
+
+    editableURL() {
+        return (
+            this.state.currentPostIndex < this.state.posts.length && (
+                <input
+                    editable
+                    style={{width: "80%"}}
+                    value={this.state.posts[this.state.currentPostIndex].full_link}
+                    onChange={(event) => {
+                        let posts = this.state.posts;
+                        posts[this.state.currentPostIndex].full_link = event.target.value;
+                        this.setState({posts});
+                    }}
+                />
+            )
+        );
     }
 
     render() {
@@ -246,9 +275,10 @@ class RedditBrowser extends React.Component {
                     <button onClick={() => this.changePostIndex(-1)}>Prev</button>
                     <button onClick={() => this.changePostIndex(1)}>Next</button>
                 </div>
-
                 <span>{this.getPostPermaLink()}</span>
+                {this.editableURL()}
                 {this.getPostTitle()}
+                {this.getUps()}
                 {this.state.currentPost && this.editableText("[0].data.children[0].data", "selftext")}
                 {replies}
             </div>
