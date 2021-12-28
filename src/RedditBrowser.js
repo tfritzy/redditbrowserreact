@@ -5,8 +5,11 @@ import React from "react";
 import ContentEditable from "react-contenteditable";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
+import {words} from "./profane";
 
 const POSTS_PER_PAGE = 3;
+const regex = new RegExp("(" + words + ")", "gi");
+const subst = `<span style='color: red'>$1</span>`;
 
 Object.byString = function (o, s) {
     s = s.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties
@@ -123,41 +126,8 @@ class RedditBrowser extends React.Component {
                 return response.json();
             })
             .then((data) => {
-                console.log(data);
                 data = JSON.stringify(data);
-                data = data.replaceAll("fuck", "<span style='color: red'>fuck</span>");
-                data = data.replaceAll("shit", "<span style='color: red'>shit</span>");
-                data = data.replaceAll("ass", "<span style='color: red'>ass</span>");
-                data = data.replaceAll("cunt", "<span style='color: red'>cunt</span>");
-                data = data.replaceAll("sex", "<span style='color: red'>sex</span>");
-                data = data.replaceAll("cigarette", "<span style='color: red'>cigarette</span>");
-                data = data.replaceAll("penis", "<span style='color: red'>penis</span>");
-                data = data.replaceAll("pissed", "<span style='color: red'>pissed</span>");
-                data = data.replaceAll("vagina", "<span style='color: red'>vagina</span>");
-                data = data.replaceAll("naked", "<span style='color: red'>naked</span>");
-                data = data.replaceAll("fetish", "<span style='color: red'>fetish</span>");
-                data = data.replaceAll("bitch", "<span style='color: red'>bitch</span>");
-                data = data.replaceAll("blowjob", "<span style='color: red'>blowjob</span>");
-                data = data.replaceAll("boob", "<span style='color: red'>boob</span>");
-                data = data.replaceAll("cameltoe", "<span style='color: red'>cameltoe</span>");
-                data = data.replaceAll("chink", "<span style='color: red'>chink</span>");
-                data = data.replaceAll("cock", "<span style='color: red'>cock</span>");
-                data = data.replaceAll("dick", "<span style='color: red'>dick</span>");
-                data = data.replaceAll("cum", "<span style='color: red'>cum</span>");
-                data = data.replaceAll("nigg", "<span style='color: red'>nigg</span>");
-                data = data.replaceAll("deepthroat", "<span style='color: red'>deepthroat</span>");
-                data = data.replaceAll("whore", "<span style='color: red'>whore</span>");
-                data = data.replaceAll("tit", "<span style='color: red'>tit</span>");
-                data = data.replaceAll("testicle", "<span style='color: red'>testicle</span>");
-                data = data.replaceAll("terrorist", "<span style='color: red'>terrorist</span>");
-                data = data.replaceAll("suicide", "<span style='color: red'>suicide</span>");
-                data = data.replaceAll("strapon", "<span style='color: red'>strapon</span>");
-                data = data.replaceAll("slut", "<span style='color: red'>slut</span>");
-                data = data.replaceAll("rimjob", "<span style='color: red'>rimjob</span>");
-                data = data.replaceAll("pussy", "<span style='color: red'>pussy</span>");
-                data = data.replaceAll("piss", "<span style='color: red'>piss</span>");
-                data = data.replaceAll("poop", "<span style='color: red'>poop</span>");
-                data = data.replaceAll("orgasim", "<span style='color: red'>orgasim</span>");
+                data = data.replace(regex, subst);
                 data = JSON.parse(data);
 
                 this.setState({currentPost: data}, () => console.log(data));
