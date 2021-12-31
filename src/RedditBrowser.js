@@ -7,9 +7,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import {words} from "./profane";
 
-const POSTS_PER_PAGE = 3;
+const POSTS_PER_PAGE = 4;
 const regex = new RegExp("(" + words + ")", "gi");
 const subst = `<span style='color: red'>$1</span>`;
+const unRedifyRegex = /<span style='color: red'>(.*?)<\/span>/gm;
+const unRedifySub = `$1`;
 
 Object.byString = function (o, s) {
     s = s.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties
@@ -68,7 +70,7 @@ class RedditBrowser extends React.Component {
 
         const id = node["id"];
         if (this.state.hiddenPosts.has(id)) {
-            return <button onClick={() => this.togglePostHidden(id)}>➕</button>;
+            return <button onClick={() => this.togglePostHidden(id)}> ➕ </button>;
         }
 
         if (!node["replies"] || !node["replies"]) {
@@ -88,14 +90,16 @@ class RedditBrowser extends React.Component {
         const nodeHtml = (
             <div>
                 <div style={{display: "flex", flexDirection: "row"}}>
-                    <button onClick={() => this.togglePostHidden(id)}>➖</button>
-                    <button onClick={() => this.selectPost(id)}>{this.state.selectedPosts.has(id) ? "✔" : "💾"}</button>
-                    {this.editableText(path, "body")}
+                    <button onClick={() => this.togglePostHidden(id)}> ➖ </button>{" "}
+                    <button onClick={() => this.selectPost(id)}>
+                        {" "}
+                        {this.state.selectedPosts.has(id) ? "✔" : "💾"}{" "}
+                    </button>{" "}
+                    {this.editableText(path, "body")}{" "}
                 </div>
-
                 {childrenFragments.map((child) => (
-                    <div style={{paddingLeft: "24px"}}>{child}</div>
-                ))}
+                    <div style={{paddingLeft: "24px"}}> {child} </div>
+                ))}{" "}
             </div>
         );
 
@@ -151,8 +155,13 @@ class RedditBrowser extends React.Component {
         let postForExport = JSON.parse(JSON.stringify(this.state.currentPost));
         postForExport[1].data.children = this.filterUnselectedChildren(postForExport[1].data.children);
 
+        let exportText = JSON.stringify(postForExport);
+        console.log(exportText);
+        exportText = exportText.replace(unRedifyRegex, unRedifySub);
+        console.log(exportText);
+
         // Create a blob with the data we want to download as a file
-        const blob = new Blob([JSON.stringify(postForExport)], {type: "text/json"});
+        const blob = new Blob([exportText], {type: "text/json"});
         // Create an anchor element and dispatch a click event on it
         // to trigger a download
         const a = document.createElement("a");
@@ -227,7 +236,7 @@ class RedditBrowser extends React.Component {
         if (this.state.currentPost) {
             return this.editableText("[0].data.children[0].data", "title");
         } else if (this.state.posts.length > this.state.currentPostIndex) {
-            return <p>{this.state.posts[this.state.currentPostIndex].title}</p>;
+            return <p> {this.state.posts[this.state.currentPostIndex].title} </p>;
         } else {
             return null;
         }
@@ -278,18 +287,14 @@ class RedditBrowser extends React.Component {
         return (
             <div className="RedditBrowser">
                 <div style={{display: "flex", flexDirection: "row", alignItems: "flex-start"}}>
-                    <DatePicker selected={this.state.startDate} onChange={(date) => this.changeSelectedDate(date)} />
-                    <button onClick={() => this.export()}>Export</button>
-                    <button onClick={this.getPost}>Get Post</button>
-                    <button onClick={() => this.changePostIndex(-1)}>Prev</button>
-                    <button onClick={() => this.changePostIndex(1)}>Next</button>
-                </div>
-                <span>{this.getPostPermaLink()}</span>
-                {this.editableURL()}
-                {this.getPostTitle()}
-                {this.getUps()}
-                {this.state.currentPost && this.editableText("[0].data.children[0].data", "selftext")}
-                {replies}
+                    <DatePicker selected={this.state.startDate} onChange={(date) => this.changeSelectedDate(date)} />{" "}
+                    <button onClick={() => this.export()}> Export </button>{" "}
+                    <button onClick={this.getPost}> Get Post </button>{" "}
+                    <button onClick={() => this.changePostIndex(-1)}> Prev </button>{" "}
+                    <button onClick={() => this.changePostIndex(1)}> Next </button>{" "}
+                </div>{" "}
+                <span> {this.getPostPermaLink()} </span> {this.editableURL()} {this.getPostTitle()} {this.getUps()}{" "}
+                {this.state.currentPost && this.editableText("[0].data.children[0].data", "selftext")} {replies}{" "}
             </div>
         );
     }
