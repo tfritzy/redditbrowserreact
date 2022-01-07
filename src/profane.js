@@ -397,5 +397,7 @@ export const words = ["2g1c",
     "yellow showers",
     "yiffy",
     "zoophilia",
-    "meth"
+    "meth",
+    "pissed",
+    "damn"
 ].join("|");
