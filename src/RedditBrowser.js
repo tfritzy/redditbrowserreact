@@ -10,7 +10,7 @@ import {words} from "./profane";
 const POSTS_PER_PAGE = 4;
 const regex = new RegExp("(" + words + ")", "gi");
 const subst = `<span style='color: red'>$1</span>`;
-const unRedifyRegex = /<span style=.color:.*?>(.*?)<\/span>/gi;
+const unRedifyRegex = /<span style=.*?color:.*?>(.*?)<\/span>/gi;
 const unRedifySub = `$1`;
 
 Object.byString = function (o, s) {
