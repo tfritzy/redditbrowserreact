@@ -125,7 +125,7 @@ class RedditBrowser extends React.Component {
 
     getPost() {
         const url = this.state.posts[this.state.currentPostIndex].full_link;
-        fetch(url + ".json?sort=top")
+        fetch(url + ".json?sort=confidence")
             .then((response) => {
                 return response.json();
             })
